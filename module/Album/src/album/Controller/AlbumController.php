@@ -6,6 +6,9 @@ use Zend\View\Model\ViewModel;
 
 class AlbumController extends AbstractActionController
 {
+	// agregamos este atributo
+    protected $albumTable;
+
     public function indexAction()
     {
     }
@@ -20,5 +23,15 @@ class AlbumController extends AbstractActionController
 
     public function deleteAction()
     {
+    }
+
+    // Agregamos este método
+    public function getAlbumTable()
+    {
+        if (!$this->albumTable) {
+            $sm = $this->getServiceLocator();
+            $this->albumTable = $sm->get('Album\Model\AlbumTable');
+        }
+        return $this->albumTable;
     }
 }
