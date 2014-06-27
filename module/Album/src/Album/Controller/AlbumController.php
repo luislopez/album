@@ -3,10 +3,13 @@ namespace Album\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
+use Album\Model\Album;          // <-- Add this import
+use Album\Form\AlbumForm;       // <-- Add this import
+
 
 class AlbumController extends AbstractActionController
 {
-	// agregamos este atributo
+    // agregamos este atributo
     protected $albumTable;
 
     public function indexAction()
@@ -16,8 +19,27 @@ class AlbumController extends AbstractActionController
         ));
     }
 
+ // Add content to this method:
     public function addAction()
-    {
+    {   
+        $form = new AlbumForm();
+        $form->get('submit')->setValue('Add');
+    
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $album = new Album();
+            $form->setInputFilter($album->getInputFilter());
+            $form->setData($request->getPost());
+    
+            if ($form->isValid()) {
+                $album->exchangeArray($form->getData());
+                $this->getAlbumTable()->saveAlbum($album);
+        
+                // Redirect to list of albums
+                return $this->redirect()->toRoute('album');
+            }
+		}
+        return array('form' => $form);
     }
 
     public function editAction()
